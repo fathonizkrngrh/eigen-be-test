@@ -6,7 +6,7 @@ const models  = {}
 const env     = process.env.ENV || "development"
 const fs      = require("fs")
 const path    = require("path")
-const setting = databases.resto_order
+const setting = databases.eigen_be_test
 
 /* SERVER CLOCK SETTINGS */
 const settingDialect = {

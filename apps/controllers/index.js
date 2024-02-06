@@ -3,7 +3,7 @@ const RESPONSE = require("../utilities/response")
 
 module.exports = {
   default: (req, res) => {
-    res.status(200).send("HELLO, WELCOME TO RESTO ORDER API");
+    res.status(200).send("HELLO, WELCOME TO LIBRARY API");
   },
   not_found: (req, res) => {
     const response = RESPONSE.error('unknown')

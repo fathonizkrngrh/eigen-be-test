@@ -4,7 +4,7 @@ const express = require("express");
 const middleware = require("../middlewares")
 //CONTROLLERS
 const controller = require("../controllers");
-const cAuth = require("../controllers/admins/auth");
+const cAuth = require("../controllers/auth");
 
 //ROUTINGS
 module.exports = (app) => {
@@ -12,9 +12,9 @@ module.exports = (app) => {
 
   const adminAuthRouter = express.Router()
   app.use('/admin', adminAuthRouter)
-  adminAuthRouter.post("/user/signin", (req, res) => cAuth.signin(req, res));
-  adminAuthRouter.post("/user/signup", (req, res) => cAuth.signup(req, res));
-  adminAuthRouter.get("/user/me", middleware.authentication, (req, res) => cAuth.me(req, res));
+  adminAuthRouter.post("/signin", (req, res) => cAuth.signin(req, res));
+  adminAuthRouter.post("/signup", (req, res) => cAuth.signup(req, res));
+  adminAuthRouter.get("/me", middleware.authentication, (req, res) => cAuth.me(req, res));
 
   // catch 404 and forward to error handler
   app.use((req, res) => controller.not_found(req, res));

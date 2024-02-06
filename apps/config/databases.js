@@ -2,12 +2,12 @@
 require('dotenv').config()
 
 module.exports = {
-    resto_order: {
+    eigen_be_test: {
         "url": process.env.DB_URL || '',
         "username": process.env.DB_USERNAME || 'root',
         "password": process.env.DB_PASSWORD || '',
         "host": process.env.DB_HOST || '127.0.0.1',
-        "database": process.env.DB_NAME || "eigen-be-test-api",
+        "database": process.env.DB_NAME || "eigen-be-test",
         "port": process.env.DB_PORT || 3306,
         "ssl": process.env.DB_SSL ||false,
         "dialect": "mysql",

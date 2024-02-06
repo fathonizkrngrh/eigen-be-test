@@ -1,11 +1,11 @@
 "use strict";
 const Op = require('sequelize').Op
-const RESPONSE  = require("../../utilities/response");
-const UTILITIES = require("../../utilities");
-const CONFIG    = require('../../config')
-const model     = require("../../models/mysql");
-const TOKEN     = require('../../utilities/token');
-const tUser     = model.users
+const CONFIG    = require('../config')
+const UTILITIES = require("../utilities");
+const RESPONSE  = require("../utilities/response");
+const TOKEN     = require('../utilities/token');
+const models     = require("../models/mysql");
+const tAdmin     = models.admins
 
 module.exports.signin = async (req, res) => {
     const { email, password } = req.body
@@ -17,7 +17,7 @@ module.exports.signin = async (req, res) => {
     }
 
     try {
-        const user = await tUser.findOne({
+        const user = await tAdmin.findOne({
             raw: true,
             where: { 
                 deleted: { [Op.eq]: 0 }, 
@@ -74,7 +74,7 @@ module.exports.signup = async (req, res) => {
             return res.status(400).json(response)
         }
 
-        const checkEmail = await tUser.findOne({
+        const checkEmail = await tAdmin.findOne({
             raw: true,
             where: {
                 email: { [Op.eq]: email },
@@ -89,7 +89,7 @@ module.exports.signup = async (req, res) => {
         }
         
         if (phone) {
-            const checkPhone = await tUser.findOne({
+            const checkPhone = await tAdmin.findOne({
                 raw: true,
                 where: {
                     phone: { [Op.eq]: UTILITIES.parsePhoneNumber(phone) },
@@ -105,7 +105,7 @@ module.exports.signup = async (req, res) => {
 
         const passwordHash = require('crypto').createHash('sha1').update(`${password.trim()}${CONFIG.password_key_encrypt}`).digest('hex')
         
-        const newUser = await tUser.create({ name, phone: UTILITIES.parsePhoneNumber(phone) || null, email, password: passwordHash, merchant_id: req.header('X-MERCHANT-ID') })
+        const newUser = await tAdmin.create({ name, phone: UTILITIES.parsePhoneNumber(phone) || null, email, password: passwordHash, merchant_id: req.header('X-MERCHANT-ID') })
         const response = RESPONSE.default
         response.data = newUser
         return res.status(200).json(response)
@@ -128,7 +128,7 @@ module.exports.me = async (req, res) => {
     })
 
     try {
-        const user = await tUser.findOne({
+        const user = await tAdmin.findOne({
             attributes: { exclude: ['created_on', 'modified_on', 'deleted', 'password'] },
             where: whereClause(),
         })
