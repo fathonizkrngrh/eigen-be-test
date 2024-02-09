@@ -18,8 +18,16 @@ components:
           type: string
         name:
           type: string
-        borrowed_books:
+        total_borrowed_books:
           type: integer
-        borrows:
+        borrowed_books:
           type: array
-          # items:
+          items:
+            type: object
+            properties:
+              book_id:
+                type: string
+              book_code:
+                type: string
+              book_title:
+                type: string

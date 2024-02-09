@@ -1,5 +1,5 @@
 "use strict";
-const CONFIG = require("./apps/config");
+const CONFIG = require("./config");
 // EXPRESS
 const methodOverride = require("method-override");
 const cors = require("cors");
@@ -14,7 +14,7 @@ if (CONFIG.env === "development") {
 
 const swaggerUI = require("swagger-ui-express")
 const swaggerJSDoc = require("swagger-jsdoc")
-const swaggerOption = require("./apps/config/documentations")
+const swaggerOption = require("./config/documentations")
 
 const swaggerSpec = swaggerJSDoc(swaggerOption)
 app.use("/documentation", swaggerUI.serve, swaggerUI.setup(swaggerSpec))
@@ -40,10 +40,10 @@ app.use(function (req, res, next) {
 
 // MODELS
 app.models = {};
-app.models.mysql = require("./apps/models/mysql");
+app.models.mysql = require("./models/mysql");
 
 // CONTROLLERS ROUTE
-app.routes = require("./apps/routes")(app);
+app.routes = require("./routes")(app);
 
 app.listen(CONFIG.port, () => {
   console.info(`======= Server is running on http://localhost:${CONFIG.port} =======`);

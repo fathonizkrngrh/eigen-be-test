@@ -72,7 +72,7 @@ if(env==='production'){
 models.borrows.belongsTo(models.books, { as: "book", foreignKey: "book_id"});
 models.books.hasMany(models.borrows, { as: "borrows", foreignKey: "book_id"});
 models.borrows.belongsTo(models.members, { as: "member", foreignKey: "member_id"});
-models.members.hasMany(models.borrows, { as: "borrows", foreignKey: "member_id"});
+models.members.hasMany(models.borrows, { as: "borrowed_books", foreignKey: "member_id"});
 models.member_penalties.belongsTo(models.members, { as: "member", foreignKey: "member_id"});
 models.members.hasMany(models.member_penalties, { as: "member_penalties", foreignKey: "member_id"});
 

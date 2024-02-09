@@ -2,8 +2,8 @@
   "name": "eigen-be-test-api",
   "version": "1.0.0",
   "scripts": {
-    "start": "node app.js",
-    "startdev": "nodemon app.js"
+    "start": "node ./apps/app.js",
+    "startdev": "nodemon ./apps/app.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -24,7 +24,6 @@
     "moment": "2.23.0",
     "mysql2": "^3.6.5",
     "path": "^0.12.7",
-    "redis": "2.8.0",
     "sequelize": "^6.35.1",
     "sequelize-cli": "5.4.0",
     "shelljs": "0.8.3",

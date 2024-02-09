@@ -41,11 +41,12 @@ module.exports.list = async (req, res) => {
             attributes: { 
                 exclude: ['created_on', 'modified_on', 'deleted'], 
                 include: [
-                    [ seq.literal(`(SELECT COUNT(*) FROM borrows WHERE borrows.member_id = members.id AND borrows.status = 'borrowed')`), 'borrowed_books']
+                    [ seq.literal(`(SELECT COUNT(*) FROM borrows WHERE borrows.member_id = members.id AND borrows.status = 'borrowed')`), 'total_borrowed_books']
                 ], 
             },
             include: [{
-                    model: tBorrow, required: false, as: 'borrows',
+                    model: tBorrow, required: false, as: 'borrowed_books', 
+                    where: { status: { [Op.eq]: 'borrowed' }},
                     attributes: ['book_id', 'book_title', 'book_code']
             }],
             where: whereClause(req.query),
