@@ -1,0 +1,189 @@
+/member:
+  get:
+    tags:
+      - Member
+    security:
+    summary: Get All Member
+    description: Endpoint to get all members
+    parameters:
+      - in: query
+        name: search
+        schema:
+          type: string
+      - in: query
+        name: order_by
+        schema:
+          type: string
+      - in: query
+        name: order_type
+        schema:
+          type: string
+          example: ASC
+      - in: query
+        name: pagination
+        schema:
+          type: string
+          example: true
+      - in: query
+        name: page
+        schema:
+          type: integer
+          example: 0
+      - in: query
+        name: size
+        schema:
+          type: integer
+          example: 10
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_params:
+                  $ref: "#/components/schemas/RequestParams"
+                status:
+                  type: string
+                  example: success
+                error_message:
+                  type: string
+                  example: null
+                data:
+                  type: object
+                  properties:
+                    total_items:
+                      type: integer
+                      example: 0
+                    items:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/ListMember"
+                    total_pages:
+                      type: integer
+                      example: 0
+                    current_pages:
+                      type: integer
+                      example: 0
+      "400":
+        $ref: "#/components/responses/BadRequest"
+      "500":
+        $ref: "#/components/responses/InternalServerError"
+  post:
+    tags:
+      - Member
+    security:
+    summary: "Create New Member"
+    operationId: create-member
+    requestBody:
+      description: Create New Member
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+              name:
+                type: string
+    responses:
+      "201":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_params:
+                  type: object
+                status:
+                  type: string
+                  example: success
+                error_message:
+                  type: string
+                  example: null
+                data:
+                  $ref: "#/components/schemas/NewMember"
+      "400":
+        $ref: "#/components/responses/BadRequest"
+      "500":
+        $ref: "#/components/responses/InternalServerError"
+/member/update:
+  patch:
+    tags:
+      - Member
+    security:
+    summary: "Update Member"
+    operationId: update-member
+    requestBody:
+      description: Update Member
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              member_id:
+                type: integer
+              code:
+                type: string
+              name:
+                type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_params:
+                status:
+                  type: string
+                  example: success
+                error_message:
+                  type: string
+                  example: null
+                data:
+                  $ref: "#/components/schemas/NewMember"
+      "400":
+        $ref: "#/components/responses/BadRequest"
+      "500":
+        $ref: "#/components/responses/InternalServerError"
+/member/delete:
+  patch:
+    tags:
+      - Member
+    security:
+    summary: "Delete Member"
+    operationId: delete-member
+    requestBody:
+      description: delete Member
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              member_id:
+                type: integer
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_params:
+                status:
+                  type: string
+                  example: success
+                error_message:
+                  type: string
+                  example: null
+                data:
+                  $ref: "#/components/schemas/NewMember"
+      "400":
+        $ref: "#/components/responses/BadRequest"
+      "500":
+        $ref: "#/components/responses/InternalServerError"

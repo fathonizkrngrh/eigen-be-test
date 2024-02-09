@@ -1,0 +1,15 @@
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        title:
+          type: string
+        author:
+          type: string
+        stock:
+          type: integer

@@ -1,0 +1,197 @@
+/book:
+  get:
+    tags:
+      - Book
+    security:
+    summary: Get All Book
+    description: Endpoint to get all books
+    parameters:
+      - in: query
+        name: search
+        schema:
+          type: string
+      - in: query
+        name: order_by
+        schema:
+          type: string
+      - in: query
+        name: order_type
+        schema:
+          type: string
+          example: ASC
+      - in: query
+        name: pagination
+        schema:
+          type: string
+          example: true
+      - in: query
+        name: page
+        schema:
+          type: integer
+          example: 0
+      - in: query
+        name: size
+        schema:
+          type: integer
+          example: 10
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_params:
+                  $ref: "#/components/schemas/RequestParams"
+                status:
+                  type: string
+                  example: success
+                error_message:
+                  type: string
+                  example: null
+                data:
+                  type: object
+                  properties:
+                    total_items:
+                      type: integer
+                      example: 0
+                    items:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/Book"
+                    total_pages:
+                      type: integer
+                      example: 0
+                    current_pages:
+                      type: integer
+                      example: 0
+      "400":
+        $ref: "#/components/responses/BadRequest"
+      "500":
+        $ref: "#/components/responses/InternalServerError"
+  post:
+    tags:
+      - Book
+    security:
+    summary: "Create New Book"
+    operationId: create-book
+    requestBody:
+      description: Create New Book
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+              title:
+                type: string
+              author:
+                type: string
+              stock:
+                type: integer
+    responses:
+      "201":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_params:
+                  type: object
+                status:
+                  type: string
+                  example: success
+                error_message:
+                  type: string
+                  example: null
+                data:
+                  $ref: "#/components/schemas/Book"
+      "400":
+        $ref: "#/components/responses/BadRequest"
+      "500":
+        $ref: "#/components/responses/InternalServerError"
+/book/update:
+  patch:
+    tags:
+      - Book
+    security:
+    summary: "Update Book"
+    operationId: update-book
+    requestBody:
+      description: Update Book
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              book_id:
+                type: integer
+              code:
+                type: string
+              title:
+                type: string
+              author:
+                type: string
+              stock:
+                type: integer
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_params:
+                status:
+                  type: string
+                  example: success
+                error_message:
+                  type: string
+                  example: null
+                data:
+                  $ref: "#/components/schemas/Book"
+      "400":
+        $ref: "#/components/responses/BadRequest"
+      "500":
+        $ref: "#/components/responses/InternalServerError"
+/book/delete:
+  patch:
+    tags:
+      - Book
+    security:
+    summary: "Delete Book"
+    operationId: delete-book
+    requestBody:
+      description: delete Book
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              book_id:
+                type: integer
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_params:
+                status:
+                  type: string
+                  example: success
+                error_message:
+                  type: string
+                  example: null
+                data:
+                  $ref: "#/components/schemas/Book"
+      "400":
+        $ref: "#/components/responses/BadRequest"
+      "500":
+        $ref: "#/components/responses/InternalServerError"

@@ -117,7 +117,7 @@ module.exports.borrow = async (req, res) => {
     }
 
     const member = await tMember.findOne({
-        where: { deleted: {[Op.eq]: 0 }, code: {[Op.eq]: body.member_code }}
+        raw: true, where: { deleted: {[Op.eq]: 0 }, code: {[Op.eq]: body.member_code }}
     })
     if (!member) {
         const response = RESPONSE.error('unknown')
@@ -126,13 +126,11 @@ module.exports.borrow = async (req, res) => {
     }
 
     const penalize = await tMemberPenalty.findOne({
-        where: { deleted: {[Op.eq]: 0 }, member_code: {[Op.eq]: body.member_code }, status: {[Op.eq]: 'on_penalize'},}
+        raw: true, where: { deleted: {[Op.eq]: 0 }, member_code: {[Op.eq]: body.member_code }, status: {[Op.eq]: 'on_penalize'},}
     })
     if (penalize) {
-        console.log('penalize', penalize)
-        const diffenrceDay = moment().diff(moment(penalize.date_to), 'days')
-        console.log('penalize late day', penalize)
-        if (diffenrceDay > 3) {
+        const isDone = moment().isAfter(moment(penalize.date_to))
+        if (isDone) {
             await penalize.update({ status: 'done'})
         } else {
             const response = RESPONSE.error('unknown')
@@ -215,23 +213,30 @@ module.exports.return = async (req, res) => {
         return res.status(400).json(response)
     }
 
-    
     const dbTrx = await seq.transaction()
     try {
         const isLate = moment().isAfter(moment(borrowedBook.due_date))
         if (isLate) {
             const member = await tMember.findOne({
-                where: { delete: { [Op.eq]: 0}, code: { [Op.eq]: body.member_code}}
+                where: { deleted: { [Op.eq]: 0}, code: { [Op.eq]: body.member_code}}
             })
     
-            await tMemberPenalty.create({
-                member_id: member.id,
-                member_code: member.code,
-                member_name: member.name,
-                date_from: moment(),
-                date_to: moment().add(3, 'days'),
-                status: 'on_penalize',
-            }, { transaction: dbTrx})
+            const [ penalty, created ] =  await tMemberPenalty.findOrCreate({
+                where: { member_code: { [Op.eq]: body.member_code }, status: { [Op.eq]: 'on_penalize' }},
+                defaults: {
+                    member_id: member.id,
+                    member_code: member.code,
+                    member_name: member.name,
+                    date_from: moment(),
+                    date_to: moment().add(3, 'days'),
+                    status: 'on_penalize',
+                },
+            })
+
+            if (penalty) {
+                penalty.date_to = moment().add(3, 'days')
+                await penalty.save()
+            }
         }
 
         await borrowedBook.update({

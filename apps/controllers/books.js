@@ -82,13 +82,13 @@ module.exports.create = async (req, res) => {
         const book = await tBook.create({
             code: body.code,
             title: body.title,
-            stock: body.stock,
+            stock: +body.stock,
             author: body.author,
         })
 
         const response = RESPONSE.default
         response.data  = book
-        return res.status(200).json(response)   
+        return res.status(201).json(response)   
     } catch (err) {
         console.log(err)
         const response = RESPONSE.error('unknown')

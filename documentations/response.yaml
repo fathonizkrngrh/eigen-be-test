@@ -1,18 +1,5 @@
 components:
   responses:
-    ApiResponse:
-      description: API Response
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        status:
-          type: string
-        message:
-          type: string
-        data:
-          type: object
     InternalServerError:
       description: Internal Server Error. Something went wrong.
       content:
@@ -32,36 +19,98 @@ components:
           schema:
             $ref: "#/components/schemas/NotFound"
   schemas:
+    RequestParams:
+      type: object
+      properties:
+        search:
+          type: string
+        order_by:
+          type: string
+          example: "title"
+        order_type:
+          type: string
+          example: "ASC / DESC"
+        pagination:
+          type: string
+          example: "true"
+        page:
+          type: integer
+          example: 0
+        size:
+          type: integer
+          example: 10
+    ResponseDataList: 
+      type: object
+      properties:
+        total_items:
+          type: integer
+          example: 0
+        items:
+          type: array
+          example: []
+        total_pages:
+          type: integer
+          example: 0
+        current_pages:
+          type: integer
+          example: 0
+    Response: 
+      type: object
+      properties:
+        request_params:
+          type: object
+          schema:
+            $ref: "#/components/schemas/RequestParams"
+        status:
+          type: string
+        error_message:
+          type: string
+        data:
+          type: object
+          schema:
+            $ref: "#/components/schemas/ResponseDataList"
     InternalError:
       type: object
       properties:
-        code:
-          type: integer
-          example: 500
+        request_params:
+          type: object
+          example: ""
         status:
           type: string
-          example: INTERNAL_SERVER_ERROR
-        message:
+          example: "error"
+        error_message:
           type: string
+          example: "Internal Server Error. Something went wrong."
+        data:
+          type: object
+          example: null
     BadRequest:
       type: object
       properties:
-        code:
-          type: integer
-          example: 400
+        request_params:
+          type: object
+          example: ""
         status:
           type: string
-          example: BAD_REQUEST
-        message:
+          example: "error"
+        error_message:
           type: string
+          example: "Bad request."
+        data:
+          type: object
+          example: null
     NotFound:
       type: object
       properties:
-        code:
-          type: integer
-          example: 404
+        request_params:
+          type: object
+          example: ""
         status:
           type: string
-          example: NOT_FOUND
-        message:
+          example: "error"
+        error_message:
           type: string
+          example: "Resource Not Found."
+        data:
+          type: object
+          example: null

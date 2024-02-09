@@ -24,11 +24,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     date_from: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: false
     },
     date_to: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: false
     },
     status: {

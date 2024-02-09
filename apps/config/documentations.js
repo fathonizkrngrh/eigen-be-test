@@ -33,7 +33,7 @@ const swaggerDefinition = {
     },
     {
       name: "Borrow",
-      description: "Everything about Borrow and Return",
+      description: "Everything about Borrowing and Returning Book",
       externalDocs: {
         description: "",
         url: "#",

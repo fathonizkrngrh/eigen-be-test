@@ -4,9 +4,7 @@ const response = {
                     'status'       : 'success', 
                     'error_message': null, 
                     'data'         : {},
-                    'next'         : "",
-                    'version'      : { "code": config.app_version, "name": config.app_semantic }
-                 }
+                }
 
 module.exports.default = response
 
@@ -50,8 +48,6 @@ module.exports.error = (errType) => {
             'request_param': "", 
             'status'       : 'error', 
             'error_message': errorMsg, 
-            'data'         : null,
-            'next'         : "",
-            'version'      : { "code": config.app_version, "name": config.app_semantic }
+            'data'         : null
         }
 }

@@ -1,0 +1,158 @@
+/borrow:
+  get:
+    tags:
+      - Borrow
+    security:
+    summary: Get All Borrowed Book
+    description: Endpoint to get all borrowed book
+    parameters:
+      - in: query
+        name: search
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          example: borrowed 
+      - in: query
+        name: order_by
+        schema:
+          type: string
+      - in: query
+        name: order_type
+        schema:
+          type: string
+          example: ASC
+      - in: query
+        name: pagination
+        schema:
+          type: string
+          example: true
+      - in: query
+        name: page
+        schema:
+          type: integer
+          example: 0
+      - in: query
+        name: size
+        schema:
+          type: integer
+          example: 10
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_params:
+                  $ref: "#/components/schemas/RequestParams"
+                status:
+                  type: string
+                  example: success
+                error_message:
+                  type: string
+                  example: null
+                data:
+                  type: object
+                  properties:
+                    total_items:
+                      type: integer
+                      example: 0
+                    items:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/Borrow"
+                    total_pages:
+                      type: integer
+                      example: 0
+                    current_pages:
+                      type: integer
+                      example: 0
+      "400":
+        $ref: "#/components/responses/BadRequest"
+      "500":
+        $ref: "#/components/responses/InternalServerError"
+  post:
+    tags:
+      - Borrow
+    security:
+    summary: "Borrow books"
+    operationId: borrow-books
+    requestBody:
+      description: Borrow books
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              member_code:
+                type: string
+              book_codes:
+                type: array
+                items:
+                  type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_params:
+                  type: object
+                status:
+                  type: string
+                  example: success
+                error_message:
+                  type: string
+                  example: null
+                data:
+                  $ref: "#/components/schemas/Borrow"
+      "400":
+        $ref: "#/components/responses/BadRequest"
+      "500":
+        $ref: "#/components/responses/InternalServerError"
+/return:
+  post:
+    tags:
+      - Borrow
+    security:
+    summary: "Return Borrowed Book"
+    operationId: return-book
+    requestBody:
+      description: Return Borrowed Book
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              member_code:
+                type: string
+              book_code:
+                type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_params:
+                  type: object
+                status:
+                  type: string
+                  example: success
+                error_message:
+                  type: string
+                  example: null
+                data:
+                  $ref: "#/components/schemas/Borrow"
+      "400":
+        $ref: "#/components/responses/BadRequest"
+      "500":
+        $ref: "#/components/responses/InternalServerError"

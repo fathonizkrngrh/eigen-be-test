@@ -1,0 +1,27 @@
+components:
+  schemas:
+    Borrow:
+      type: object
+      properties:
+        id:
+          type: string
+        member_id:
+          type: string
+        member_code:
+          type: string
+        member_name:
+          type: string
+        book_id:
+          type: string
+        book_code:
+          type: string
+        book_name:
+          type: string
+        status:
+          type: string
+        borrowed_date:
+          type: string
+        due_date:
+          type: string
+        returned_date:
+          type: string

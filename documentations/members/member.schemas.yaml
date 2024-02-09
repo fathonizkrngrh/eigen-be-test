@@ -1,0 +1,25 @@
+components:
+  schemas:
+    NewMember:
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+    ListMember:
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        borrowed_books:
+          type: integer
+        borrows:
+          type: array
+          # items:
