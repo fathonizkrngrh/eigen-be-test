@@ -41,7 +41,6 @@ app.use(function (req, res, next) {
 // MODELS
 app.models = {};
 app.models.mysql = require("./apps/models/mysql");
-// app.models.buffer= require('./apps/models/redis')
 
 // CONTROLLERS ROUTE
 app.routes = require("./apps/routes")(app);

@@ -3,14 +3,14 @@
 */
 
 function reverse(str) {
-    const chars = str.split('');
+    const chars = str.split('')
     
-    const letters = chars.filter(char => /[a-zA-Z]/.test(char));
-    const numbers = chars.filter(char => /\d/.test(char));
+    const letters = chars.filter(char => /[a-zA-Z]/.test(char))
+    const numbers = chars.filter(char => /\d/.test(char))
     
     const reversedLetter = letters.reverse()
 
-    const reversedStr = reversedLetter.join('') + numbers.join('');
+    const reversedStr = reversedLetter.join('') + numbers.join('')
     
     return reversedStr
 }
