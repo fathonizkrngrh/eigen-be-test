@@ -12,6 +12,13 @@ if (CONFIG.env === "development") {
   app.use(logger("dev"));
 }
 
+const swaggerUI = require("swagger-ui-express")
+const swaggerJSDoc = require("swagger-jsdoc")
+const swaggerOption = require("./apps/config/documentations")
+
+const swaggerSpec = swaggerJSDoc(swaggerOption)
+app.use("/documentation", swaggerUI.serve, swaggerUI.setup(swaggerSpec))
+
 // CORS
 app.use(cors({origin: '*'}));
 app.use(methodOverride("_method"));

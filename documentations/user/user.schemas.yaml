@@ -1,0 +1,104 @@
+components:
+  schemas:
+    UserType:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        full_name:
+          type: string
+        user_name:
+          type: string
+        avatar:
+          type: string
+        gender:
+          type: string
+        phone_number:
+          type: string
+        email_verified_at:
+          type: string
+        role:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 26228b47-fdce-4b39-84a5-360a38c98a37
+        email:
+          type: string
+          example: user0001@gmail.com
+        full_name:
+          type: string
+          example: Teacher 1
+        user_name:
+          type: string
+          example: teacher1
+        gender:
+          type: string
+          example: MALE or FEMALE
+        phone_number:
+          type: string
+          example: 626969361361
+        avatar:
+          type: string
+          example: https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50
+        email_verified_at:
+          type: string
+          example: null
+        role:
+          type: string
+          example: GUEST
+        created_at:
+          type: string
+          example: 2023-03-16 10:52:49
+        updated_at:
+          type: string
+          example: 2023-03-16 10:52:49
+    UserCompleteInfo:
+      type: object
+      properties:
+        avatar:
+          type: string
+        discussion_likes:
+          type: integer
+        discussion_posted:
+          type: integer
+        full_name:
+          type: string
+        user_name:
+          type: string
+        ipk:
+          type: number
+          format: float
+        semester:
+          type: integer
+        major:
+          type: string
+        poin:
+          type: string
+        role:
+          type: string
+        total_certificates:
+          type: integer
+        current_subjects:
+          type: number
+        finished_subjects:
+          type: number
+    UserShortInfo:
+      type: object
+      properties:
+        avatar:
+          type: string
+        full_name:
+          type: string
+        major:
+          type: string
+        role:
+          type: string

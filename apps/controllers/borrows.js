@@ -9,7 +9,7 @@ const model = require("../models/mysql");
 const seq = model.sequelize
 const tBook = model.books
 const tMember = model.members
-const tMemberPenalty = model.member_penalities
+const tMemberPenalty = model.member_penalties
 const tBorrow = model.borrows
 
 const catchMessage = `Mohon maaf telah terjadi gangguan, jangan panik kami akan terus meningkatkan layanan.`
@@ -100,11 +100,12 @@ module.exports.borrow = async (req, res) => {
     }
 
     let books = []
-    body.book_codes.forEach(async(book_code) => {
-        const book = await tBook.findOne({ where: { deleted: { [Op.eq]: 0 }, code: { [Op.eq]: book_code }}})
+    for (let i = 0; i < body.book_codes.length; i++) {
+        const bookCode = body.book_codes[i]
+        const book = await tBook.findOne({ raw: true, where: { deleted: { [Op.eq]: 0 }, code: { [Op.eq]: bookCode }}})
         if (!book) {
             const response = RESPONSE.error('unknown')
-            response.error_message = `Buku tidak ditemukan.`
+            response.error_message = `Buku dengan kode ${bookCode} tidak ditemukan.`
             return res.status(400).json(response)
         }
         if (book.stock === 0) {
@@ -113,7 +114,7 @@ module.exports.borrow = async (req, res) => {
             return res.status(400).json(response)
         }
         books.push(book)
-    });
+    }
 
     const member = await tMember.findOne({
         where: { deleted: {[Op.eq]: 0 }, code: {[Op.eq]: body.member_code }}
@@ -127,8 +128,10 @@ module.exports.borrow = async (req, res) => {
     const penalize = await tMemberPenalty.findOne({
         where: { deleted: {[Op.eq]: 0 }, member_code: {[Op.eq]: body.member_code }, status: {[Op.eq]: 'on_penalize'},}
     })
-    if (penalize.date_to) {
+    if (penalize) {
+        console.log('penalize', penalize)
         const diffenrceDay = moment().diff(moment(penalize.date_to), 'days')
+        console.log('penalize late day', penalize)
         if (diffenrceDay > 3) {
             await penalize.update({ status: 'done'})
         } else {
@@ -138,12 +141,10 @@ module.exports.borrow = async (req, res) => {
         }
     }
 
-    const dbTrx = await seq.transaction()
-
     try {        
-        let newBooks = []
+        let newBooks = [], updatedBooks = []
         books.forEach(async (book) => {
-            const newBook = await tBorrow.create({
+            newBooks.push({
                 member_id: member.id,
                 member_code: member.code,
                 member_name: member.name,
@@ -153,26 +154,26 @@ module.exports.borrow = async (req, res) => {
                 status: 'borrowed',
                 borrowed_date: moment(),
                 due_date: moment().add(7, 'days'),
-            }, { 
-                transaction: dbTrx
             })
-            newBooks.push(newBook)
 
-            await tBook.update({
-                stock: book.stock - 1
-            }, { 
-                where: { deleted: {[Op.eq]: 0 }, id: {[Op.eq]: book.id}}
-            }, { transaction: dbTrx})
+            updatedBooks.push(
+                await tBook.update({
+                    stock: book.stock - 1
+                }, { where: { deleted: {[Op.eq]: 0 }, id: {[Op.eq]: book.id}}
+                })
+            )
         })
 
-        dbTrx.commit()
+        await Promise.all([
+            await tBorrow.bulkCreate(newBooks),
+            updatedBooks,
+        ])
 
         const response = RESPONSE.default
         response.data  = newBooks
         return res.status(200).json(response)   
     } catch (err) {
         console.log(err)
-        dbTrx.rollback()
         const response = RESPONSE.error('unknown')
         response.error_message = err.message || catchMessage
         return res.status(500).json(response)
@@ -189,85 +190,64 @@ module.exports.borrow = async (req, res) => {
 module.exports.return = async (req, res) => {
     const body = req.body
 
-    if (!body.member_code || (!body.book_codes || body.book_codes?.length === 0)) {
+    if (!body.member_code || !body.book_code) {
         const response = RESPONSE.error('unknown')
         response.error_message = `Permintaan tidak lengkap. ID Member dan ID Buku wajib diisi.`
         return res.status(400).json(response)
     }
 
-    let total_books = body.book_codes.length
-    if (total_books > 2) {
+    const book = await tBook.findOne({ 
+        where: { deleted: { [Op.eq]: 0 }, code: { [Op.eq]: body.book_code }},
+        attributes: ['id', 'stock']
+    })
+    if (!book) {
         const response = RESPONSE.error('unknown')
-        response.error_message = `Maksimal peminjaman hanya 2 jenis buku.`
+        response.error_message = `Buku tidak ditemukan.`
         return res.status(400).json(response)
     }
 
-    const totalBorrowedBooks = await tBorrow.count({
-        where: { deleted: { [Op.eq]: 0 }, member_code: { [Op.eq]: body.member_code }, status: { [Op.eq]: 'borrowed' },}
+    const borrowedBook = await tBorrow.findOne({ 
+        where: { deleted: { [Op.eq]: 0 }, member_code: { [Op.eq]: body.member_code }, book_code: { [Op.eq]: body.book_code }, status: { [Op.eq]: 'borrowed' }}
     })
-
-    total_books += totalBorrowedBooks
-    if (total_books > 2) {
+    if (!borrowedBook) {
         const response = RESPONSE.error('unknown')
-        response.error_message = `Kamu sudah meminjam ${totalBorrowedBooks} buku. Maksimal peminjaman hanya 2 jenis buku.`
+        response.error_message = `Buku tidak ditemukan dalam list peminjaman.`
         return res.status(400).json(response)
     }
 
-    body.book_codes.forEach(async(book_code) => {
-        const book = await tBook.findOne({ where: { deleted: { [Op.eq]: 0 }, code: { [Op.eq]: book_code }}})
-        if (!book) {
-            const response = RESPONSE.error('unknown')
-            response.error_message = `Buku tidak ditemukan.`
-            return res.status(400).json(response)
-        }
-        if (book.stock === 0) {
-            const response = RESPONSE.error('unknown')
-            response.error_message = `Stok buku ${book.title} habis.`
-            return res.status(400).json(response)
-        }
-    });
-
-    const member = await tMember.findOne({
-        where: { deleted: {[Op.eq]: 0 }, code: {[Op.eq]: body.member_code }}
-    })
-    if (!member) {
-        const response = RESPONSE.error('unknown')
-        response.error_message = `Member tidak ditemukan.`
-        return res.status(400).json(response)
-    }
-
-    const penalize = await tMemberPenalty.findOne({
-        where: { deleted: {[Op.eq]: 0 }, member_code: {[Op.eq]: body.member_code }, status: {[Op.eq]: 'on_penalize'},}
-    })
-    if (penalize.date_to) {
-        const diffenrceDay = moment().diff(moment(penalize.date_to), 'days')
-        if (diffenrceDay > 3) {
-            await penalize.update({ status: 'done'})
-        } else {
-            const response = RESPONSE.error('unknown')
-            response.error_message = `Member masih dalam penalty.`
-            return res.status(400).json(response)
-        }
-    }
-
+    
+    const dbTrx = await seq.transaction()
     try {
+        const isLate = moment().isAfter(moment(borrowedBook.due_date))
+        if (isLate) {
+            const member = await tMember.findOne({
+                where: { delete: { [Op.eq]: 0}, code: { [Op.eq]: body.member_code}}
+            })
+    
+            await tMemberPenalty.create({
+                member_id: member.id,
+                member_code: member.code,
+                member_name: member.name,
+                date_from: moment(),
+                date_to: moment().add(3, 'days'),
+                status: 'on_penalize',
+            }, { transaction: dbTrx})
+        }
 
-        const borrow = await tBorrow.create({
-            member_id: member.id,
-            member_code: member.code,
-            member_name: member.name,
-            book_id: book.id,
-            book_code: book.code,
-            book_title: book.title,
-            status: 'borrowed',
-            borrowed_date: moment(),
-            due_date: moment().add(7, 'days'),
-        })
+        await borrowedBook.update({
+            retured_date: moment(),
+            status: 'returned'
+        }, { transaction: dbTrx})
+
+        await book.update({ stock: book.stock + 1}, { transaction: dbTrx})
+
+        await dbTrx.commit()
 
         const response = RESPONSE.default
-        response.data  = borrow
+        response.data  = borrowedBook
         return res.status(200).json(response)   
     } catch (err) {
+        await dbTrx.rollback()
         console.log(err)
         const response = RESPONSE.error('unknown')
         response.error_message = err.message || catchMessage

@@ -1,0 +1,321 @@
+/user/profile:
+  get:
+    tags:
+      - Book
+    security:
+    summary: (ADMIN) Get All User
+    description: Endpoint to get all registered user
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                status:
+                  type: string
+                  example: OK
+                message:
+                  type: string
+                  example: Success get user
+                data:
+                  type: object
+                  properties:
+                    users:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/UserType"
+      "400":
+        $ref: "#/components/responses/BadResponse"
+      "500":
+        $ref: "#/components/responses/InternalServerError"
+/user/profile/me:
+  get:
+    tags:
+      - User Profile
+    security:
+      - bearerAuth: []
+    summary: Get Authenticated User
+    description: Endpoint to get Authenticated User with access token
+    operationId: get-profile-me
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                status:
+                  type: string
+                  example: OK
+                message:
+                  type: string
+                  example: Success get user
+                data:
+                  type: object
+                  properties:
+                    user:
+                      $ref: "#/components/schemas/User"
+      "401":
+        $ref: "#/components/responses/Unauthorized"
+      "403":
+        $ref: "#/components/responses/Forbidden"
+      "500":
+        $ref: "#/components/responses/InternalServerError"
+  put:
+    tags:
+      - User Profile
+    security:
+      - bearerAuth: []
+    summary: "Update Profile Me"
+    description: Endpoint to update profile (me)
+    operationId: put-update-profile-me
+    requestBody:
+      description: Update User Profile
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              full_name:
+                type: string
+                example: "Fathoni Zikri Nugroho"
+              user_name:
+                type: string
+                example: "fathonizkr"
+              phone_number:
+                type: string
+                example: 6269696969
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                status:
+                  type: string
+                message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    user:
+                      $ref: "#/components/schemas/User"
+      "400":
+        $ref: "#/components/responses/BadRequest"
+      "401":
+        $ref: "#/components/responses/Unauthorized"
+      "404":
+        $ref: "#/components/responses/NotFound"
+      "422":
+        $ref: "#/components/responses/ValidationError"
+      "500":
+        $ref: "#/components/responses/InternalServerError"
+/user/profile/avatar:
+  put:
+    tags:
+      - User Profile
+    security:
+      - bearerAuth: []
+    summary: "Update Profile Avatar"
+    description: Endpoint to update profile avatar
+    operationId: put-update-profile-avatar
+    requestBody:
+      description: Update User Avatar
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              avatar:
+                type: string
+                format: binary
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                status:
+                  type: string
+                  example: OK
+                message:
+                  type: string
+                  example: "Success update avatar"
+                data:
+                  type: object
+                  properties:
+                    avatar:
+                      type: string
+                      example: https://res.cloudinary.com/dlwncfs2u/image/upload/v1679910812/avatar/avatar_274d91bc-e837-470f-af7d-66760f85bcb8.png
+      "400":
+        $ref: "#/components/responses/BadRequest"
+      "401":
+        $ref: "#/components/responses/Unauthorized"
+      "404":
+        $ref: "#/components/responses/NotFound"
+      "422":
+        $ref: "#/components/responses/ValidationError"
+      "500":
+        $ref: "#/components/responses/InternalServerError"
+
+/user/profile/complete:
+  get:
+    tags:
+      - User Profile
+    security:
+      - bearerAuth: []
+    summary: (ADMIN,STUDENT,TEACHER) Get Complete Info About Current User
+    description: Get Complete Info About Current User
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                status:
+                  type: string
+                  example: OK
+                message:
+                  type: string
+                  example: Success get user complete info
+                data:
+                  type: object
+                  properties:
+                    user:
+                      $ref: "#/components/schemas/UserCompleteInfo"
+      "401":
+        $ref: "#/components/responses/Unauthorized"
+      "403":
+        $ref: "#/components/responses/Forbidden"
+      "500":
+        $ref: "#/components/responses/InternalServerError"
+
+/user/profile/{id}:
+  get:
+    tags:
+      - User Profile
+    security:
+      - bearerAuth: []
+    summary: (ADMIN) Get User by Id
+    description: Endpoint to get Authenticated User with id
+    operationId: get-profile-by-id
+    parameters:
+      - name: id
+        in: path
+        description: "The Id params that needs to be fetched."
+        required: true
+        schema:
+          type: string
+          example: f39b703d-7fd7-4142-afcb-38f9a0bcb371
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                status:
+                  type: string
+                  example: OK
+                message:
+                  type: string
+                  example: Success get user
+                data:
+                  type: object
+                  properties:
+                    user:
+                      $ref: "#/components/schemas/User"
+      "401":
+        $ref: "#/components/responses/Unauthorized"
+      "403":
+        $ref: "#/components/responses/Forbidden"
+      "500":
+        $ref: "#/components/responses/InternalServerError"
+  put:
+    tags:
+      - User Profile
+    security:
+      - bearerAuth: []
+    summary: (ADMIN) Update Profile by Id
+    description: Endpoint to update profile by Id
+    operationId: put-update-profile-by-id
+    parameters:
+      - name: id
+        in: path
+        description: "The Id params that needs to be fetched."
+        required: true
+        schema:
+          type: string
+          example: f39b703d-7fd7-4142-afcb-38f9a0bcb371
+    requestBody:
+      description: Update User Profile by Id
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              full_name:
+                type: string
+                example: "Fathoni Zikri Nugroho"
+              user_name:
+                type: string
+                example: "fathonizkr"
+              phone_number:
+                type: string
+                example: 6269696969
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                status:
+                  type: string
+                message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    user:
+                      $ref: "#/components/schemas/User"
+      "400":
+        $ref: "#/components/responses/BadRequest"
+      "401":
+        $ref: "#/components/responses/Unauthorized"
+      "404":
+        $ref: "#/components/responses/NotFound"
+      "422":
+        $ref: "#/components/responses/ValidationError"
+      "500":
+        $ref: "#/components/responses/InternalServerError"

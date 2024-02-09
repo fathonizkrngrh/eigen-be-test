@@ -44,20 +44,16 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     borrowed_date: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: false,
       defaultValue: Sequelize.Sequelize.fn('now')
     },
     due_date: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: false
     },
     returned_date: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    returned_to: {
-      type: DataTypes.JSON,
+      type: DataTypes.DATEONLY,
       allowNull: true
     },
     created_on: {

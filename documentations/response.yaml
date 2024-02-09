@@ -1,0 +1,67 @@
+components:
+  responses:
+    ApiResponse:
+      description: API Response
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+    InternalServerError:
+      description: Internal Server Error. Something went wrong.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/InternalError"
+    BadRequest:
+      description: Bad Request.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/BadRequest"
+    NotFound:
+      description: Not Found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/NotFound"
+  schemas:
+    InternalError:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 500
+        status:
+          type: string
+          example: INTERNAL_SERVER_ERROR
+        message:
+          type: string
+    BadRequest:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 400
+        status:
+          type: string
+          example: BAD_REQUEST
+        message:
+          type: string
+    NotFound:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 404
+        status:
+          type: string
+          example: NOT_FOUND
+        message:
+          type: string
